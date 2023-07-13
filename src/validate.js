@@ -14,7 +14,7 @@ export default (url, state, rssUrlInput, rssForm) => {
   })
 
   const schema = yup.object().shape({
-    url: yup.string().url('Ссылка должна быть валидным URL').test('unique', 'RSS уже существует', (value) => {
+    url: yup.string().url('UrlNotValid').test('unique', 'RSSExists', (value) => {
       return isUnique(value, state);
     })
   });

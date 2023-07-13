@@ -1,3 +1,5 @@
+import i18next from "i18next";
+
 export default (path, value, rssUrlInput, rssForm) => {
   switch(path) {
     case 'feedUrls':
@@ -7,7 +9,7 @@ export default (path, value, rssUrlInput, rssForm) => {
     break;
     case 'error':
     rssUrlInput.classList.add('is-invalid');
-    console.log(value);
+    console.log(i18next.t(value));
     break;
   }
 }
