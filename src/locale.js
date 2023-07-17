@@ -14,6 +14,11 @@ export default () => {
           },
           "UrlNotValid": "Ссылка должна быть валидным URL",
           "RSSExists": "RSS уже существует",
+          'renderRSS': {
+            'feeds': 'Фиды',
+            'posts': 'Посты',
+            'button': 'Просмотр',
+          }
         }
       }
     }

@@ -7,21 +7,29 @@
 </head>
 <body>
   <main>
-    <div>
-      <form action class="rss">
-        <div class="row">
-          <div class="col-rss">
-            <div class="form-floating">
-              <input id="url-input" autofocus="" required="" name="url" aria-label="url" class="form-control w-100" placeholder="ссылка RSS" autocomplete="off">
-              <label id="url-input-label" for="url-input"></label>
+    <section class="container-fluid bg-dark p-5">
+      <div>
+        <form action class="rss">
+          <div class="row">
+            <div class="col-rss">
+              <div class="form-floating">
+                <input id="url-input" autofocus="" required="" name="url" aria-label="url" class="form-control w-100" placeholder="ссылка RSS" autocomplete="off">
+                <label id="url-input-label" for="url-input"></label>
+              </div>
+            </div>
+            <div class="col-button">
+              <button id="button" type="submit" aria-label="add" class="h-100 btn btn-lg btn-primary px-sm-5"></button>
             </div>
           </div>
-          <div class="col-button">
-            <button id="button" type="submit" aria-label="add" class="h-100 btn btn-lg btn-primary px-sm-5"></button>
-          </div>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
+    </section>
+    <section class="container-fluid container-xxl p-5">
+      <div class="row">
+        <div class="col-md-10 col-lg-8 order-1 mx-auto posts"></div>
+        <div class="col-md-10 col-lg-4 mx-auto order-0 order-lg-1 feeds"></div>
+      </div>
+    </section>
   </main>
   <script src="./src/index.js"></script>
 </body>

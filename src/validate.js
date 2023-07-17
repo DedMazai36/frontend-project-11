@@ -10,7 +10,7 @@ const isUnique = (url, state) => {
 
 export default (url, state, rssUrlInput, rssForm) => {
   const wotchedObject = onChange(state, (path, value) => {
-    render(path, value, rssUrlInput, rssForm);
+    render(path, value, rssUrlInput, rssForm, wotchedObject);
   })
 
   const schema = yup.object().shape({

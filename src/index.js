@@ -6,6 +6,8 @@ import locale from './locale.js';
 const state = {
   feedUrls: [],
   error: '',
+  rssData: [],
+  rssError: '',
 }
 
 locale();
