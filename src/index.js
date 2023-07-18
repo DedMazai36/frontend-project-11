@@ -8,6 +8,7 @@ const state = {
   error: '',
   rssData: [],
   rssError: '',
+  update: false,
 }
 
 locale();

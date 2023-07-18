@@ -50,7 +50,6 @@ export const renderRSS = (rssData) => {
   const feedElement = document.querySelector('.feeds');
   postElement.innerHTML = `<div class="col-md-10 col-lg-8 order-1 mx-auto posts"><div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.posts')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div></div>`;
   feedElement.innerHTML = `<div class="col-md-10 col-lg-4 mx-auto order-0 order-lg-1 feeds"><div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.feeds')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div></div>`;
-  console.log(rssData);
   rssData.map((urlData) => {
     renderUlFeeds(urlData, feedElement);
     urlData.linkList.map((post) => {

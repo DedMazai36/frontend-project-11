@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import getRSS from './getRSS.js';
+import { getNewRss, updateRss } from './getRSS.js';
 import { renderRSS, renderError } from './renderRSS.js';
 
 export default (path, value, rssUrlInput, rssForm, state) => {
@@ -7,18 +7,24 @@ export default (path, value, rssUrlInput, rssForm, state) => {
     case 'feedUrls':
       rssUrlInput.classList.remove('is-invalid');
       rssForm.reset();
-      console.log(value);
-      getRSS(value[value.length - 1], state);
+      //console.log(value);
+      getNewRss(value[value.length - 1], state);
       break;
     case 'error':
       rssUrlInput.classList.add('is-invalid');
-      console.log(i18next.t(value));
+      //console.log(i18next.t(value));
       break;
     case 'rssData':
       renderRSS(value);
+      state.update = true;
       break;
     case 'rssError':
       renderError(value);
+      break;
+    case 'update':
+      if (value === true) {
+        updateRss(state);
+      }
       break;
   }
 }
