@@ -18,7 +18,11 @@ export default () => {
             'feeds': 'Фиды',
             'posts': 'Посты',
             'button': 'Просмотр',
-          }
+          },
+          'modal': {
+            'closeButton': 'Закрыть',
+            'linkButton': 'Читать полностью',
+          },
         }
       }
     }

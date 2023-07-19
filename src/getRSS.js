@@ -21,9 +21,10 @@ const getParserData = (url, state) => {
             id: `${state.rssData.length}-${list.length}`,
             linkTitle: itemEl.querySelector('title').textContent,
             link: itemEl.querySelector('link').textContent,
+            description: itemEl.querySelector('description').textContent,
+            viewed: false,
           });
         });
-
         return [feedTitle, feedDescription, list];
       };
     });
@@ -48,6 +49,7 @@ export const updateRss = (state) => {
   state.feedUrls.map((url) => {
     getParserData(url, state)
       .then((data) => {
+        if (data !== null) {
         const [feedTitle, feedDescription, list] = data;
         list.map((post) => {
           let i = 0;
@@ -57,16 +59,18 @@ export const updateRss = (state) => {
                 id: `${i}-${link.linkList.length}`,
                 linkTitle: post.linkTitle,
                 link: post.link,
+                description: post.description,
+                viewed: false,
               });
             }
             i += 1;
           });
         });
+        }
       });
   });
 
   setTimeout(() => {
-    console.log(state);
     updateRss(state);
   }, 5000);
 };

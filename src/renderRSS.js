@@ -17,13 +17,17 @@ const renderUlFeeds = (urlData, feedElement) => {
   ulEl.insertBefore(liEl, ulEl.firstChild);
 };
 
-const renderUlPosts = (post, postElement) => {
+const renderUlPosts = (post, postElement, rssData) => {
   const liEl = document.createElement('li');
   liEl.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
   const linkEl = document.createElement('a');
   linkEl.href = post.link;
-  linkEl.className = 'fw-bold';
+  if (post.viewed === false) {
+    linkEl.className = 'fw-bold';
+  } else {
+    linkEl.className = 'fw-normal';
+  }
   linkEl.setAttribute('data-id', post.id);
   linkEl.target = '_blank';
   linkEl.rel = 'noopener noreferrer';
@@ -43,6 +47,16 @@ const renderUlPosts = (post, postElement) => {
   const ulEl = postElement.querySelector('ul');
   ulEl.appendChild(liEl);
   ulEl.insertBefore(liEl, ulEl.firstChild);
+
+  linkEl.addEventListener('click', (e) => {
+    post.viewed = true;
+    renderRSS(rssData);
+  });
+
+  buttonEl.addEventListener('click', (e) => {
+    post.viewed = true;
+    renderRSS(rssData);
+  });
 }
 
 export const renderRSS = (rssData) => {
@@ -53,9 +67,27 @@ export const renderRSS = (rssData) => {
   rssData.map((urlData) => {
     renderUlFeeds(urlData, feedElement);
     urlData.linkList.map((post) => {
-      renderUlPosts(post, postElement);
+      renderUlPosts(post, postElement, rssData);
     })
+  });
+
+  const modalEl = document.getElementById('modal');
+  modalEl.addEventListener('show.bs.modal', (e) => {
+    const button = e.relatedTarget;
+    const id = button.getAttribute('data-id');
+    const foundObject = rssData.find(function (obj) {
+      return obj.id === +id.toString()[0];
+    });
+    const foundPost = foundObject.linkList.find(function (obj) {
+      return obj.id === id;
+    });
+    modalEl.querySelector('h5').textContent = foundPost.linkTitle;
+    modalEl.querySelector('.btn-secondary').textContent = i18next.t('modal.closeButton');
+    modalEl.querySelector('.modal-body').textContent = foundPost.description;
+    modalEl.querySelector('a').href = foundPost.link;
+    modalEl.querySelector('a').textContent = i18next.t('modal.linkButton');
   })
+
 };
 
 export const renderError = (errorEl) => {
