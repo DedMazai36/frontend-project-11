@@ -1,7 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 
-const getParserData = (url, state) => {
+export const getParserData = (url, state) => {
   const urlProxi = `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`;
   const parser = new DOMParser();
 
@@ -11,7 +11,6 @@ const getParserData = (url, state) => {
       const element = parser.parseFromString(response.data.contents, "application/xml");
       const errorNode = element.querySelector("parsererror");
       if (errorNode) {
-        state.rssError = errorNode;
         return null;
       } else {
         const feedTitle = element.querySelector('title').textContent;
@@ -34,6 +33,7 @@ export const getNewRss = (url, state) => {
   getParserData(url, state)
     .then((data) => {
       if (data !== null) {
+        state.error = 'success';
         const [feedTitle, feedDescription, list] = data;
         state.rssData.push({
           id: state.rssData.length,
@@ -41,29 +41,35 @@ export const getNewRss = (url, state) => {
           description: feedDescription,
           linkList: list,
         });
+      } else {
+        state.error = 'notRss';
       }
     })
 };
 
+
 export const updateRss = (state) => {
+
   state.feedUrls.map((url) => {
     getParserData(url, state)
       .then((data) => {
         if (data !== null) {
         const [feedTitle, feedDescription, list] = data;
         list.map((post) => {
-          let i = 0;
+          const urlID = state.feedUrls.indexOf(url);
           state.rssData.map((link) => {
-            if (!link.linkList.some((element) => element.linkTitle === post.linkTitle)) {
-              link.linkList.push({
-                id: `${i}-${link.linkList.length}`,
-                linkTitle: post.linkTitle,
-                link: post.link,
-                description: post.description,
-                viewed: false,
-              });
+            if (link.id === urlID) {
+              if (!link.linkList.some((element) => element.linkTitle === post.linkTitle)) {
+                console.log(post)
+                link.linkList.push({
+                  id: `${urlID}-${link.linkList.length}`,
+                  linkTitle: post.linkTitle,
+                  link: post.link,
+                  description: post.description,
+                  viewed: false,
+                });
+              }
             }
-            i += 1;
           });
         });
         }

@@ -62,8 +62,8 @@ const renderUlPosts = (post, postElement, rssData) => {
 export const renderRSS = (rssData) => {
   const postElement = document.querySelector('.posts');
   const feedElement = document.querySelector('.feeds');
-  postElement.innerHTML = `<div class="col-md-10 col-lg-8 order-1 mx-auto posts"><div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.posts')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div></div>`;
-  feedElement.innerHTML = `<div class="col-md-10 col-lg-4 mx-auto order-0 order-lg-1 feeds"><div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.feeds')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div></div>`;
+  postElement.innerHTML = `<div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.posts')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div>`;
+  feedElement.innerHTML = `<div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.feeds')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div>`;
   rssData.map((urlData) => {
     renderUlFeeds(urlData, feedElement);
     urlData.linkList.map((post) => {
@@ -88,9 +88,4 @@ export const renderRSS = (rssData) => {
     modalEl.querySelector('a').textContent = i18next.t('modal.linkButton');
   })
 
-};
-
-export const renderError = (errorEl) => {
-  const postElement = document.querySelector('.posts');
-  postElement.appendChild(errorEl);
 };

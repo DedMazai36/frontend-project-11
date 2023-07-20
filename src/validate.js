@@ -10,7 +10,7 @@ const isUnique = (url, state) => {
 
 export default (url, state, rssUrlInput, rssForm) => {
   const wotchedObject = onChange(state, (path, value) => {
-    render(path, value, rssUrlInput, rssForm, wotchedObject);
+    render(path, value, rssUrlInput, rssForm, wotchedObject, state);
   })
 
   const schema = yup.object().shape({
@@ -25,7 +25,7 @@ export default (url, state, rssUrlInput, rssForm) => {
 
   schema.validate(data)
     .then(validatedData => {
-      wotchedObject.feedUrls.push(data.url);
+        wotchedObject.feedUrls.push(data.url);
     })
     .catch(validationError => {
       wotchedObject.error = validationError.errors[0];

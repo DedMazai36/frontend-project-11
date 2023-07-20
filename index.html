@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="title"></title>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
   <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modal" style="display: none;" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -21,19 +21,31 @@
       </div>
     </div>
   </div>
-  <main>
+  <main class="flex-grow-1">
     <section class="container-fluid bg-dark p-5">
-      <div>
+      <div class="row">
         <form action class="rss">
           <div class="row">
             <div class="col-rss">
-              <div class="form-floating">
-                <input id="url-input" autofocus="" required="" name="url" aria-label="url" class="form-control w-100" placeholder="ссылка RSS" autocomplete="off">
-                <label id="url-input-label" for="url-input"></label>
+              <div class="col-md-10 col-lg-8 mx-auto text-white">
+                <h1 id="main-head" class="display-3 mb-0"></h1>
+                <p id="second-head" class="lead"></p>
+                <form action="" class="rss-form text-body">
+                  <div class="row">
+                    <div class="col">
+                      <div class="form-floating">
+                        <input id="url-input" autofocus="" required="" name="url" aria-label="url" class="form-control w-100" autocomplete="off">
+                        <label id="url-input-label" class="text-black" for="url-input"></label>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <button id="url-button" type="submit" aria-label="add" class="h-100 btn btn-lg btn-primary px-sm-5"></button>
+                    </div>
+                  </div>
+                </form>
+                <p id="example" class="mt-2 mb-0 text-secondary"></p>
+                <p id="error" class="feedback m-0 position-absolute small text-danger"></p>
               </div>
-            </div>
-            <div class="col-button">
-              <button id="button" type="submit" aria-label="add" class="h-100 btn btn-lg btn-primary px-sm-5"></button>
             </div>
           </div>
         </form>
