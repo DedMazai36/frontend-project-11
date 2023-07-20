@@ -27,6 +27,11 @@ export default (path, value, rssUrlInput, rssForm, state, notWatchedState) => {
         errorEl.classList.remove('text-success');
         errorEl.classList.add('text-danger');
         //state.update = true;
+      } else if (value === 'ERR_NETWORK') {
+        notWatchedState.feedUrls.pop();
+        errorEl.textContent = i18next.t(value);
+        errorEl.classList.remove('text-success');
+        errorEl.classList.add('text-danger');
       } else {
         rssUrlInput.classList.add('is-invalid');
         errorEl.textContent = i18next.t(value);

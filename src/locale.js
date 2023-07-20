@@ -19,6 +19,7 @@ export default () => {
           "RSSExists": "RSS уже существует",
           'success': 'RSS успешно загружен',
           'notRss': 'Ресурс не содержит валидный RSS',
+          'ERR_NETWORK': 'Ошибка сети',
           'renderRSS': {
             'feeds': 'Фиды',
             'posts': 'Посты',

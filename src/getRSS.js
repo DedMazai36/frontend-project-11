@@ -11,6 +11,7 @@ export const getParserData = (url, state) => {
       const element = parser.parseFromString(response.data.contents, "application/xml");
       const errorNode = element.querySelector("parsererror");
       if (errorNode) {
+        state.error = 'notRss';
         return null;
       } else {
         const feedTitle = element.querySelector('title').textContent;
@@ -26,6 +27,12 @@ export const getParserData = (url, state) => {
         });
         return [feedTitle, feedDescription, list];
       };
+    })
+    .catch(function(error) {
+      if (error.code === 'ERR_NETWORK') {
+        state.error = 'ERR_NETWORK';
+      }
+      return null;
     });
 };
 
@@ -41,8 +48,6 @@ export const getNewRss = (url, state) => {
           description: feedDescription,
           linkList: list,
         });
-      } else {
-        state.error = 'notRss';
       }
     })
 };
