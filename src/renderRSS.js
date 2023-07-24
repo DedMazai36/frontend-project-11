@@ -1,3 +1,6 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable array-callback-return */
+/* eslint-disable no-param-reassign */
 import i18next from 'i18next';
 
 const renderUlFeeds = (urlData, feedElement) => {
@@ -59,8 +62,7 @@ const renderUlPosts = (post, postElement, rssData) => {
   });
 };
 
-// eslint-disable-next-line import/prefer-default-export
-export const renderRSS = (rssData) => {
+function renderRSS(rssData) {
   const postElement = document.querySelector('.posts');
   const feedElement = document.querySelector('.feeds');
   postElement.innerHTML = `<div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.posts')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div>`;
@@ -87,4 +89,8 @@ export const renderRSS = (rssData) => {
       }
     });
   });
+}
+
+export default (rssData) => {
+  renderRSS(rssData);
 };

@@ -1,6 +1,4 @@
-const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -31,13 +29,6 @@ module.exports = {
           {
             // Loader for webpack to process CSS with PostCSS
             loader: 'postcss-loader',
-            options: {
-              postcssOptions: {
-                plugins: () => [
-                  autoprefixer,
-                ],
-              },
-            },
           },
           {
             // Loads a SASS/SCSS file and compiles it to CSS

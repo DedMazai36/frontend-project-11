@@ -2,7 +2,7 @@
 /* eslint-disable default-case */
 import i18next from 'i18next';
 import { updateRss } from './getRSS.js';
-import { renderRSS } from './renderRSS.js';
+import renderRSS from './renderRSS.js';
 
 export default (path, value, state, notWatchedState) => {
   const errorEl = document.getElementById('error');

@@ -26,12 +26,10 @@ export default () => {
     const data = new FormData(e.target);
     const url = data.get('url');
 
-    // validate(url, state, rssUrlInput, rssForm);
-
     validate(url, watchedState.feedUrls)
       .then((value) => validateParser(value.url, watchedState))
       .catch((error) => {
-        showError(error.message, watchedState)
+        showError(error.message, watchedState);
       });
 
     rssUrlInput.focus();
