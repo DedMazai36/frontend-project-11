@@ -9,13 +9,12 @@ env:
   node: true
   jest: true
   browser: true
-
-parser: "@babel/eslint-parser"
-
 extends:
   - "airbnb-base"
   - "plugin:jest/recommended"
-
-rules:
+overrides: []
+parser: "@babel/eslint-parser"
+rules: {
   no-console: 0
   import/extensions: 0
+}

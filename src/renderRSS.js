@@ -48,17 +48,18 @@ const renderUlPosts = (post, postElement, rssData) => {
   ulEl.appendChild(liEl);
   ulEl.insertBefore(liEl, ulEl.firstChild);
 
-  linkEl.addEventListener('click', (e) => {
+  linkEl.addEventListener('click', () => {
     post.viewed = true;
     renderRSS(rssData);
   });
 
-  buttonEl.addEventListener('click', (e) => {
+  buttonEl.addEventListener('click', () => {
     post.viewed = true;
     renderRSS(rssData);
   });
-}
+};
 
+// eslint-disable-next-line import/prefer-default-export
 export const renderRSS = (rssData) => {
   const postElement = document.querySelector('.posts');
   const feedElement = document.querySelector('.feeds');
@@ -68,24 +69,22 @@ export const renderRSS = (rssData) => {
     renderUlFeeds(urlData, feedElement);
     urlData.linkList.map((post) => {
       renderUlPosts(post, postElement, rssData);
-    })
+    });
   });
 
   const modalEl = document.getElementById('modal');
   modalEl.addEventListener('show.bs.modal', (e) => {
     const button = e.relatedTarget;
     const id = button.getAttribute('data-id');
-    const foundObject = rssData.find(function (obj) {
-      return obj.id === +id.toString()[0];
+    rssData.map((link) => {
+      const foundPost = link.linkList.find((obj) => obj.id === id);
+      if (foundPost) {
+        modalEl.querySelector('h5').textContent = foundPost.linkTitle;
+        modalEl.querySelector('.btn-secondary').textContent = i18next.t('modal.closeButton');
+        modalEl.querySelector('.modal-body').textContent = foundPost.description;
+        modalEl.querySelector('a').href = foundPost.link;
+        modalEl.querySelector('a').textContent = i18next.t('modal.linkButton');
+      }
     });
-    const foundPost = foundObject.linkList.find(function (obj) {
-      return obj.id === id;
-    });
-    modalEl.querySelector('h5').textContent = foundPost.linkTitle;
-    modalEl.querySelector('.btn-secondary').textContent = i18next.t('modal.closeButton');
-    modalEl.querySelector('.modal-body').textContent = foundPost.description;
-    modalEl.querySelector('a').href = foundPost.link;
-    modalEl.querySelector('a').textContent = i18next.t('modal.linkButton');
-  })
-
+  });
 };

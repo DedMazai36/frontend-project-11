@@ -1,22 +1,29 @@
 import _ from 'lodash';
-import onChange from 'on-change';
-import render from './render.js';
 
 const yup = require('yup');
 
-const isUnique = (url, state) => {
-  return !_.includes(state.feedUrls, url);
-}
+const isUnique = (url, feedUrls) => !_.includes(feedUrls, url);
 
+export default (url, feedUrls) => {
+  const schema = yup.object().shape({
+    url: yup.string().url('UrlNotValid').test('unique', 'RSSExists', (value) => isUnique(value, feedUrls)),
+  });
+
+  const data = {
+    url,
+  };
+
+  return schema.validate(data);
+};
+
+/*
 export default (url, state, rssUrlInput, rssForm) => {
   const wotchedObject = onChange(state, (path, value) => {
     render(path, value, rssUrlInput, rssForm, wotchedObject, state);
-  })
+  });
 
   const schema = yup.object().shape({
-    url: yup.string().url('UrlNotValid').test('unique', 'RSSExists', (value) => {
-      return isUnique(value, state);
-    })
+    url: yup.string().url('UrlNotValid').test('unique', 'RSSExists', (value) => isUnique(value, state)),
   });
 
   const data = {
@@ -24,10 +31,11 @@ export default (url, state, rssUrlInput, rssForm) => {
   };
 
   schema.validate(data)
-    .then(validatedData => {
-        wotchedObject.feedUrls.push(data.url);
+    .then((validatedData) => {
+      wotchedObject.feedUrls.push(data.url);
     })
-    .catch(validationError => {
+    .catch((validationError) => {
       wotchedObject.error = validationError.errors[0];
-    })
+    });
 };
+*/
