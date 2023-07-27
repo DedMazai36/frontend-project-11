@@ -18,12 +18,7 @@ export default (path, value, state, notWatchedState) => {
         errorEl.textContent = i18next.t(`errors.${value}`);
         errorEl.classList.remove('text-danger');
         errorEl.classList.add('text-success');
-      } else if (value === 'notRss') {
-        notWatchedState.feedUrls.pop();
-        errorEl.textContent = i18next.t(`errors.${value}`);
-        errorEl.classList.remove('text-success');
-        errorEl.classList.add('text-danger');
-      } else if (value === 'ERR_NETWORK') {
+      } else if (value === 'notRss' || value === 'ERR_NETWORK') {
         notWatchedState.feedUrls.pop();
         errorEl.textContent = i18next.t(`errors.${value}`);
         errorEl.classList.remove('text-success');
