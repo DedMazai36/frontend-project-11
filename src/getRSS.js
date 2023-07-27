@@ -56,7 +56,8 @@ const loadRss = (url, watchedState) => {
   getParserData(url)
     .then((data) => {
       const [feedTitle, feedDescription, list] = data;
-      watchedState.error = 'success';
+      watchedState.feedUrls.push(url);
+      watchedState.uiStats.error = 'success';
       watchedState.rssData.push({
         id: _.uniqueId(),
         title: feedTitle,
