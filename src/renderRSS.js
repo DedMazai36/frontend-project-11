@@ -2,6 +2,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable no-param-reassign */
 import i18next from 'i18next';
+import _ from 'lodash';
 
 const renderUlFeeds = (urlData, feedElement) => {
   const liEl = document.createElement('li');
@@ -20,16 +21,16 @@ const renderUlFeeds = (urlData, feedElement) => {
   ulEl.insertBefore(liEl, ulEl.firstChild);
 };
 
-const renderUlPosts = (post, postElement, rssData) => {
+const renderUlPosts = (post, postElement, state) => {
   const liEl = document.createElement('li');
   liEl.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
   const linkEl = document.createElement('a');
   linkEl.href = post.link;
-  if (post.viewed === false) {
-    linkEl.className = 'fw-bold';
-  } else {
+  if (_.includes(state.uiStats.viewedPosts, post)) {
     linkEl.className = 'fw-normal';
+  } else {
+    linkEl.className = 'fw-bold';
   }
   linkEl.setAttribute('data-id', post.id);
   linkEl.target = '_blank';
@@ -52,25 +53,25 @@ const renderUlPosts = (post, postElement, rssData) => {
   ulEl.insertBefore(liEl, ulEl.firstChild);
 
   linkEl.addEventListener('click', () => {
-    post.viewed = true;
-    renderRSS(rssData);
+    state.uiStats.viewedPosts.push(post);
+    renderRSS(state);
   });
 
   buttonEl.addEventListener('click', () => {
-    post.viewed = true;
-    renderRSS(rssData);
+    state.uiStats.viewedPosts.push(post);
+    renderRSS(state);
   });
 };
 
-function renderRSS(rssData) {
+function renderRSS(state) {
   const postElement = document.querySelector('.posts');
   const feedElement = document.querySelector('.feeds');
   postElement.innerHTML = `<div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.posts')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div>`;
   feedElement.innerHTML = `<div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.feeds')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div>`;
-  rssData.map((urlData) => {
+  state.rssData.map((urlData) => {
     renderUlFeeds(urlData, feedElement);
     urlData.linkList.map((post) => {
-      renderUlPosts(post, postElement, rssData);
+      renderUlPosts(post, postElement, state);
     });
   });
 
@@ -78,7 +79,7 @@ function renderRSS(rssData) {
   modalEl.addEventListener('show.bs.modal', (e) => {
     const button = e.relatedTarget;
     const id = button.getAttribute('data-id');
-    rssData.map((link) => {
+    state.rssData.map((link) => {
       const foundPost = link.linkList.find((obj) => obj.id === id);
       if (foundPost) {
         modalEl.querySelector('h5').textContent = foundPost.linkTitle;
@@ -91,6 +92,6 @@ function renderRSS(rssData) {
   });
 }
 
-export default (rssData) => {
-  renderRSS(rssData);
+export default (state) => {
+  renderRSS(state);
 };

@@ -8,13 +8,12 @@ export default (path, value, state, notWatchedState) => {
   const errorEl = document.getElementById('error');
   const rssForm = document.querySelector('.rss');
   const rssUrlInput = document.getElementById('url-input');
-
   switch (path) {
     case 'feedUrls':
       rssUrlInput.classList.remove('is-invalid');
       rssForm.reset();
       break;
-    case 'error':
+    case 'uiStats.error':
       if (value === 'success') {
         errorEl.textContent = i18next.t(`errors.${value}`);
         errorEl.classList.remove('text-danger');
@@ -24,7 +23,6 @@ export default (path, value, state, notWatchedState) => {
         errorEl.textContent = i18next.t(`errors.${value}`);
         errorEl.classList.remove('text-success');
         errorEl.classList.add('text-danger');
-        // state.update = true;
       } else if (value === 'ERR_NETWORK') {
         notWatchedState.feedUrls.pop();
         errorEl.textContent = i18next.t(`errors.${value}`);
@@ -38,7 +36,7 @@ export default (path, value, state, notWatchedState) => {
       }
       break;
     case 'rssData':
-      renderRSS(value);
+      renderRSS(state);
       state.update = true;
       break;
     case 'update':

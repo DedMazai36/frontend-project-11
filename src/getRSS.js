@@ -4,107 +4,107 @@
 import axios from 'axios';
 import _ from 'lodash';
 
-const getParserElement = (url) => {
-  const urlProxi = `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`;
+const parse = (contents) => {
   const parser = new DOMParser();
+  const element = parser.parseFromString(contents, 'application/xml');
+  const errorNode = element.querySelector('parsererror');
+  if (errorNode) {
+    throw new Error('notRss');
+  }
+  const item = [];
+  const title = element.querySelector('title').textContent;
+  const description = element.querySelector('description').textContent;
+  element.querySelectorAll('item').forEach((itemEl) => {
+    item.push({
+      title: itemEl.querySelector('title').textContent,
+      link: itemEl.querySelector('link').textContent,
+      description: itemEl.querySelector('description').textContent,
+    });
+  });
+  return {
+    title,
+    description,
+    item,
+  };
+};
+
+const changingData = (data) => {
+  const list = [];
+  data.item.map((itemEl) => {
+    list.push({
+      id: _.uniqueId(),
+      linkTitle: itemEl.title,
+      link: itemEl.link,
+      description: itemEl.description,
+    });
+  });
+
+  return [data.title, data.description, list];
+};
+
+const getParserData = (url) => {
+  const urlProxi = `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`;
 
   return axios.get(urlProxi)
     .then((response) => {
-      const element = parser.parseFromString(response.data.contents, 'application/xml');
-      const errorNode = element.querySelector('parsererror');
-      if (errorNode) {
-        return 'notRss';
-      }
-      return element;
+      const data = parse(response.data.contents);
+      return changingData(data);
+    });
+};
+
+const loadRss = (url, watchedState) => {
+  getParserData(url)
+    .then((data) => {
+      const [feedTitle, feedDescription, list] = data;
+      watchedState.error = 'success';
+      watchedState.rssData.push({
+        id: _.uniqueId(),
+        title: feedTitle,
+        description: feedDescription,
+        linkList: list,
+      });
+      watchedState.updateUrls.push(url);
     })
-    .catch((error) => {
-      if (error.code === 'ERR_NETWORK') {
-        return 'ERR_NETWORK';
+    .catch((e) => {
+      if (e.code === 'ERR_NETWORK') {
+        watchedState.uiStats.error = 'ERR_NETWORK';
+      } else if (e.message === 'notRss') {
+        watchedState.uiStats.error = 'notRss';
+      } else {
+        watchedState.uiStats.error = 'unknown';
       }
     });
-};
-
-const getParserData = (element) => {
-  const list = [];
-  const feedTitle = element.querySelector('title').textContent;
-  const feedDescription = element.querySelector('description').textContent;
-  element.querySelectorAll('item').forEach((itemEl) => {
-    list.push({
-      id: _.uniqueId(),
-      linkTitle: itemEl.querySelector('title').textContent,
-      link: itemEl.querySelector('link').textContent,
-      description: itemEl.querySelector('description').textContent,
-      viewed: false,
-    });
-  });
-
-  return [feedTitle, feedDescription, list];
-};
-
-const loadRss = (parserElement, watchedState) => {
-  const parserData = getParserData(parserElement);
-  const [feedTitle, feedDescription, list] = parserData;
-  watchedState.error = 'success';
-  watchedState.rssData.push({
-    id: _.uniqueId(),
-    title: feedTitle,
-    description: feedDescription,
-    linkList: list,
-  });
 };
 
 const showError = (errorMessage, watchedState) => {
-  watchedState.error = errorMessage;
-};
-
-const validateParser = (url, watchedState) => {
-  getParserElement(url)
-    .then((parserElement) => {
-      if (_.isString(parserElement)) {
-        showError(parserElement, watchedState);
-      } else {
-        watchedState.feedUrls.push(url);
-        watchedState.updateUrls.push(url);
-        loadRss(parserElement, watchedState);
-      }
-    });
+  watchedState.uiStats.error = errorMessage;
 };
 
 const updateRss = (state) => {
   const urls = state.updateUrls;
   if (urls.length > 0) {
     urls.map((url) => {
-      getParserElement(url)
-        .then((parserElement) => {
-          if (_.isString(parserElement)) {
-            _.remove(urls, (el) => el === url);
-          } else {
-            const parserData = getParserData(parserElement);
-            const [feedTitle,, list] = parserData;
-
-            list.map((post) => {
-              state.rssData.map((link) => {
-                if (link.title === feedTitle) {
-                  if (!link.linkList.some((element) => element.linkTitle === post.linkTitle)) {
-                    link.linkList.push({
-                      id: _.uniqueId(),
-                      linkTitle: post.linkTitle,
-                      link: post.link,
-                      description: post.description,
-                      viewed: false,
-                    });
-                  }
-                }
-              });
-            });
-          }
+      getParserData(url)
+        .then((data) => {
+          const [feedTitle,, list] = data;
+          state.rssData.map((link) => {
+            if (link.title === feedTitle) {
+              const difference = _.differenceBy(list, link.linkList, 'linkTitle');
+              if (difference.length > 0) {
+                link.linkList = _.concat(link.linkList, difference);
+              }
+            }
+          });
+        })
+        .catch(() => {
+          _.remove(urls, (el) => el === url);
         });
     });
   }
-  console.log(state);
+
   setTimeout(() => {
     updateRss(state);
   }, 5000);
 };
 
-export { validateParser, showError, updateRss };
+export { loadRss, showError, updateRss };

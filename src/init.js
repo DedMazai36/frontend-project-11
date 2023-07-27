@@ -1,15 +1,17 @@
 import onChange from 'on-change';
 import validate from './validate.js';
 import render from './render.js';
-import { validateParser, showError } from './getRSS.js';
+import { loadRss, showError } from './getRSS.js';
 
 const state = {
   feedUrls: [],
   updateUrls: [],
-  error: '',
   rssData: [],
-  rssError: '',
   update: false,
+  uiStats: {
+    error: '',
+    viewedPosts: [],
+  },
 };
 
 const watchedState = onChange(state, (path, value) => {
@@ -27,7 +29,7 @@ export default () => {
     const url = data.get('url');
 
     validate(url, watchedState.feedUrls)
-      .then((value) => validateParser(value.url, watchedState))
+      .then((value) => loadRss(value.url, watchedState))
       .catch((error) => {
         showError(error.message, watchedState);
       });
