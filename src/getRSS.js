@@ -9,7 +9,9 @@ const parse = (contents) => {
   const element = parser.parseFromString(contents, 'application/xml');
   const errorNode = element.querySelector('parsererror');
   if (errorNode) {
-    throw new Error('notRss');
+    const e = new Error('The resource does not contain valid RSS');
+    e.isParsingError = true;
+    throw e;
   }
   const item = [];
   const title = element.querySelector('title').textContent;
@@ -29,9 +31,9 @@ const parse = (contents) => {
 };
 
 const changingData = (data) => {
-  const list = [];
+  const items = [];
   data.item.map((itemEl) => {
-    list.push({
+    items.push({
       id: _.uniqueId(),
       linkTitle: itemEl.title,
       link: itemEl.link,
@@ -39,7 +41,11 @@ const changingData = (data) => {
     });
   });
 
-  return [data.title, data.description, list];
+  return {
+    title: data.title,
+    description: data.description,
+    items,
+  };
 };
 
 const getParserData = (url) => {
@@ -55,21 +61,20 @@ const getParserData = (url) => {
 const loadRss = (url, watchedState) => {
   getParserData(url)
     .then((data) => {
-      const [feedTitle, feedDescription, list] = data;
       watchedState.feedUrls.push(url);
       watchedState.uiStats.error = 'success';
       watchedState.rssData.push({
         id: _.uniqueId(),
-        title: feedTitle,
-        description: feedDescription,
-        linkList: list,
+        title: data.title,
+        description: data.description,
+        linkList: data.items,
       });
       watchedState.updateUrls.push(url);
     })
     .catch((e) => {
-      if (e.code === 'ERR_NETWORK') {
+      if (e.isAxiosError) {
         watchedState.uiStats.error = 'ERR_NETWORK';
-      } else if (e.message === 'notRss') {
+      } else if (e.isParsingError === true) {
         watchedState.uiStats.error = 'notRss';
       } else {
         watchedState.uiStats.error = 'unknown';
@@ -87,10 +92,9 @@ const updateRss = (state) => {
     urls.map((url) => {
       getParserData(url)
         .then((data) => {
-          const [feedTitle,, list] = data;
           state.rssData.map((link) => {
-            if (link.title === feedTitle) {
-              const difference = _.differenceBy(list, link.linkList, 'linkTitle');
+            if (link.title === data.title) {
+              const difference = _.differenceBy(data.items, link.linkList, 'linkTitle');
               if (difference.length > 0) {
                 link.linkList = _.concat(link.linkList, difference);
               }

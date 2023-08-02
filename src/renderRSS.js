@@ -2,7 +2,6 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable no-param-reassign */
 import i18next from 'i18next';
-import _ from 'lodash';
 
 const renderUlFeeds = (urlData, feedElement) => {
   const liEl = document.createElement('li');
@@ -27,7 +26,7 @@ const renderUlPosts = (post, postElement, state) => {
 
   const linkEl = document.createElement('a');
   linkEl.href = post.link;
-  if (_.includes(state.uiStats.viewedPosts, post)) {
+  if (state.uiStats.viewedPosts.has(post)) {
     linkEl.className = 'fw-normal';
   } else {
     linkEl.className = 'fw-bold';
@@ -53,12 +52,12 @@ const renderUlPosts = (post, postElement, state) => {
   ulEl.insertBefore(liEl, ulEl.firstChild);
 
   linkEl.addEventListener('click', () => {
-    state.uiStats.viewedPosts.push(post);
+    state.uiStats.viewedPosts.add(post);
     renderRSS(state);
   });
 
   buttonEl.addEventListener('click', () => {
-    state.uiStats.viewedPosts.push(post);
+    state.uiStats.viewedPosts.add(post);
     renderRSS(state);
   });
 };

@@ -9,8 +9,8 @@ const state = {
   rssData: [],
   update: false,
   uiStats: {
-    error: '',
-    viewedPosts: [],
+    error: null,
+    viewedPosts: new Set(),
   },
 };
 
