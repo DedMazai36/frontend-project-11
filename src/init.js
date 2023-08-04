@@ -7,7 +7,7 @@ const state = {
   feedUrls: [],
   updateUrls: [],
   rssData: [],
-  update: false,
+  isUpdating: 'idle',
   uiStats: {
     error: null,
     viewedPosts: new Set(),

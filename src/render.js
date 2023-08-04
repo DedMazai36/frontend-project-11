@@ -34,8 +34,8 @@ export default (path, value, state, notWatchedState) => {
       renderRSS(state);
       state.update = true;
       break;
-    case 'update':
-      if (value === true) {
+    case 'isUpdating':
+      if (value !== 'failed') {
         updateRss(state);
       }
       break;

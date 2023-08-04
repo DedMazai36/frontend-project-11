@@ -20,7 +20,7 @@ const renderUlFeeds = (urlData, feedElement) => {
   ulEl.insertBefore(liEl, ulEl.firstChild);
 };
 
-const renderUlPosts = (post, postElement, state) => {
+const renderUlPosts = (post, postElement, state, elements) => {
   const liEl = document.createElement('li');
   liEl.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
@@ -53,44 +53,48 @@ const renderUlPosts = (post, postElement, state) => {
 
   linkEl.addEventListener('click', () => {
     state.uiStats.viewedPosts.add(post);
-    renderRSS(state);
+    renderRSS(state, elements);
   });
 
   buttonEl.addEventListener('click', () => {
     state.uiStats.viewedPosts.add(post);
-    renderRSS(state);
+    renderRSS(state, elements);
   });
 };
 
-function renderRSS(state) {
-  const postElement = document.querySelector('.posts');
-  const feedElement = document.querySelector('.feeds');
-  postElement.innerHTML = `<div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.posts')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div>`;
-  feedElement.innerHTML = `<div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.feeds')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div>`;
+function renderRSS(state, elements) {
+  elements.post.innerHTML = `<div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.posts')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div>`;
+  elements.feed.innerHTML = `<div class="card border-0"><div class="card-body"><h2 class="card-title h4">${i18next.t('renderRSS.feeds')}</h2></div><ul class="list-group border-0 rounded-0"></ul></div>`;
   state.rssData.map((urlData) => {
-    renderUlFeeds(urlData, feedElement);
+    renderUlFeeds(urlData, elements.feed);
     urlData.linkList.map((post) => {
-      renderUlPosts(post, postElement, state);
+      renderUlPosts(post, elements.post, state, elements);
     });
   });
 
-  const modalEl = document.getElementById('modal');
-  modalEl.addEventListener('show.bs.modal', (e) => {
+  elements.modal.addEventListener('show.bs.modal', (e) => {
     const button = e.relatedTarget;
     const id = button.getAttribute('data-id');
     state.rssData.map((link) => {
       const foundPost = link.linkList.find((obj) => obj.id === id);
       if (foundPost) {
-        modalEl.querySelector('h5').textContent = foundPost.linkTitle;
-        modalEl.querySelector('.btn-secondary').textContent = i18next.t('modal.closeButton');
-        modalEl.querySelector('.modal-body').textContent = foundPost.description;
-        modalEl.querySelector('a').href = foundPost.link;
-        modalEl.querySelector('a').textContent = i18next.t('modal.linkButton');
+        elements.modal.querySelector('h5').textContent = foundPost.linkTitle;
+        elements.modal.querySelector('.btn-secondary').textContent = i18next.t('modal.closeButton');
+        elements.modal.querySelector('.modal-body').textContent = foundPost.description;
+        const aElement = elements.modal.querySelector('a');
+        aElement.href = foundPost.link;
+        aElement.textContent = i18next.t('modal.linkButton');
       }
     });
   });
 }
 
 export default (state) => {
-  renderRSS(state);
+  const elements = {
+    post: document.querySelector('.posts'),
+    feed: document.querySelector('.feeds'),
+    modal: document.getElementById('modal'),
+  };
+
+  renderRSS(state, elements);
 };
